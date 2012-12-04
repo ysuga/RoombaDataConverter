@@ -103,6 +103,7 @@ RTC::ReturnCode_t RoombaDataConverter::onShutdown(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t RoombaDataConverter::onActivated(RTC::UniqueId ec_id)
 {
+  //  m_velocityOut.data.length(3);
   return RTC::RTC_OK;
 }
 
@@ -115,6 +116,24 @@ RTC::ReturnCode_t RoombaDataConverter::onDeactivated(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t RoombaDataConverter::onExecute(RTC::UniqueId ec_id)
 {
+  if(m_velocityInIn.isNew()) {
+    m_velocityInIn.read();
+    m_velocityOut.data.vx = m_velocityIn.data[0];
+    m_velocityOut.data.vy = m_velocityIn.data[1];
+    m_velocityOut.data.va = m_velocityIn.data[2];
+    m_velocityOutOut.write();
+  }
+
+  if(m_imageInIn.isNew()) {
+    m_imageInIn.read();
+    if(m_imageIn.pixels.length() != m_imageOut.data.length()) {
+      m_imageOut.data.length(m_imageIn.pixels.length());
+    }
+
+    memcpy((void*)(&(m_imageOut.data[0])), (void*)(&(m_imageIn.pixels[0])), m_imageIn.pixels.length());
+    m_imageOutOut.write();
+  }
+
   return RTC::RTC_OK;
 }
 
