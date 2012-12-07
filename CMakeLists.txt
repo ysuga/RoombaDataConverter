@@ -48,6 +48,7 @@ set(SHARE_INSTALL_DIR
 if(NOT WIN32)
     list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 endif(NOT WIN32)
+find_package(OpenCV 2 REQUIRED)
 find_package(OpenRTM REQUIRED)
 
 # Universal settings

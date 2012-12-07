@@ -124,13 +124,26 @@ RTC::ReturnCode_t RoombaDataConverter::onExecute(RTC::UniqueId ec_id)
     m_velocityOutOut.write();
   }
 
-  if(m_imageInIn.isNew()) {
-    m_imageInIn.read();
-    if(m_imageIn.pixels.length() != m_imageOut.data.length()) {
-      m_imageOut.data.length(m_imageIn.pixels.length());
-    }
+  //  if(m_imageInIn.isNew()) {
+  if(m_imageInIn.read()) {
+    std::cout << "WxH = " << m_imageIn.width << "x" << m_imageIn.height << " Size = " << m_imageIn.pixels.length() << std::endl;
 
-    memcpy((void*)(&(m_imageOut.data[0])), (void*)(&(m_imageIn.pixels[0])), m_imageIn.pixels.length());
+    std::vector<byte> buff;
+
+    //if(m_imageIn.pixels.length() != m_imageOut.data.length()) {
+    //m_imageOut.data.length(m_imageIn.pixels.length());
+    //}
+    //if(m_imageIn.width *  m_imageIn.height != m_imageOut.data.length() ) {
+    //      m_imageOut.data.length(m_imageIn.width * m_imageIn.height);
+    //    }
+    //    for(int i = 0;i < m_imageOut.data.length();i++) {
+    //      uint32_t r = m_imageIn.pixels[i*3+0];
+    //      uint32_t g = m_imageIn.pixels[i*3+1];
+    //      uint32_t b = m_imageIn.pixels[i*3+2];
+    //      uint32_t a = 0xff;
+    //      m_imageOut.data[i] = (a << 24) || (r << 16) || (g << 8) || (b << 0);
+    //    }
+        memcpy((void*)(&(m_imageOut.data[0])), (void*)(&(m_imageIn.pixels[0])), m_imageIn.pixels.length());
     m_imageOutOut.write();
   }
 
