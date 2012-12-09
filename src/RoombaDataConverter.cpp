@@ -8,7 +8,7 @@
  */
 
 #include "RoombaDataConverter.h"
-
+#include <fstream>
 // Module specification
 // <rtc-template block="module_spec">
 static const char* roombadataconverter_spec[] =
@@ -103,6 +103,7 @@ RTC::ReturnCode_t RoombaDataConverter::onShutdown(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t RoombaDataConverter::onActivated(RTC::UniqueId ec_id)
 {
+
   //  m_velocityOut.data.length(3);
   return RTC::RTC_OK;
 }
@@ -124,12 +125,29 @@ RTC::ReturnCode_t RoombaDataConverter::onExecute(RTC::UniqueId ec_id)
     m_velocityOutOut.write();
   }
 
-  //  if(m_imageInIn.isNew()) {
-  if(m_imageInIn.read()) {
+  if(m_imageInIn.isNew()) {
+    m_imageInIn.read();
     std::cout << "WxH = " << m_imageIn.width << "x" << m_imageIn.height << " Size = " << m_imageIn.pixels.length() << std::endl;
-
-    std::vector<byte> buff;
-
+    cv::Mat mat(m_imageIn.height, m_imageIn.width, CV_8UC3, &(m_imageIn.pixels[0]));
+    
+    std::vector<uchar> buff;//buffer for coding
+    std::vector<int> param = std::vector<int>(2);
+    param[0]=CV_IMWRITE_JPEG_QUALITY;
+    param[1]=60;//default(95) 0-100
+ 
+    cv::imencode(".jpg",mat,buff,param);
+    int size = buff.size();
+    std::cout << "Sending JPEG data (size = " << size << std::endl;
+    m_imageOut.data.length(size);
+    for(int i = 0;i < size;i++) {
+      m_imageOut.data[i] = buff[i];
+    }
+    m_imageOutOut.write();
+    static int i;
+    if(!i) {
+      std::ofstream fout("test.jpg");
+      fout.write((char*)&(m_imageOut.data[0]), m_imageOut.data.length());
+    }
     //if(m_imageIn.pixels.length() != m_imageOut.data.length()) {
     //m_imageOut.data.length(m_imageIn.pixels.length());
     //}
@@ -143,8 +161,8 @@ RTC::ReturnCode_t RoombaDataConverter::onExecute(RTC::UniqueId ec_id)
     //      uint32_t a = 0xff;
     //      m_imageOut.data[i] = (a << 24) || (r << 16) || (g << 8) || (b << 0);
     //    }
-        memcpy((void*)(&(m_imageOut.data[0])), (void*)(&(m_imageIn.pixels[0])), m_imageIn.pixels.length());
-    m_imageOutOut.write();
+    //memcpy((void*)(&(m_imageOut.data[0])), (void*)(&(m_imageIn.pixels[0])), m_imageIn.pixels.length());
+    //    m_imageOutOut.write();
   }
 
   return RTC::RTC_OK;

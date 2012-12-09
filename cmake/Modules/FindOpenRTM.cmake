@@ -36,10 +36,10 @@ pkg_check_modules(PC_OMNIDYNAMIC4 omniDynamic4)
 pkg_check_modules(PC_UUID uuid)
 
 find_path(OPENRTM_INCLUDE_DIR rtm/RTC.h
-    HINTS ${OPENRTM_ROOT}/include ${OPENRTM_ROOT} $ENV{OPENRTM_ROOT}/include ${PC_OPENRTM_INCLUDE_DIRS})
+    HINTS ${OPENRTM_ROOT}/include ${OPENRTM_ROOT} $ENV{RTM_ROOT} $ENV{OPENRTM_ROOT}/include ${PC_OPENRTM_INCLUDE_DIRS}) 
 
 find_path(COIL_INCLUDE_DIR coil/config_coil.h
-    HINTS ${OPENRTM_ROOT}/include $ENV{OPENRTM_ROOT}/include ${PC_COIL_INCLUDE_DIRS})
+    HINTS ${OPENRTM_ROOT}/include $ENV{RTM_ROOT}/../coil-1.1 $ENV{OPENRTM_ROOT}/include ${PC_COIL_INCLUDE_DIRS})
 
 find_path(OMNIORB4_INCLUDE_DIR omniORB4/omniORB.h
     HITS ${OMNI_ROOT}/include ${PC_OMNIORB4_INCLUDE_DIRS})
